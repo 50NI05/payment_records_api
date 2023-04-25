@@ -1,0 +1,134 @@
+import { pool } from '../../db.js'
+import bcryptjs from "bcryptjs";
+
+export const getUsers = async (req, res) => {
+  try {
+    const [rows] = await pool.query('SELECT * FROM t_user')
+    res.json({
+      status: 'SUCCESS',
+      data: rows
+    })
+  } catch (error) {
+    return res.status(500).json({
+      status: 'Error',
+      // data: 'Something goes wrong'
+      data: 'Algo va mal'
+    })
+  }
+}
+
+export const getUser = async (req, res) => {
+  try {
+    const [rows] = await pool.query('SELECT * FROM t_user WHERE id = ?', [req.params.id])
+    if (rows.length <= 0) {
+      return res.status(404).json({
+        status: 'Error',
+        // data: 'User not found'
+        data: 'Usuario no encontrado'
+      })
+    }
+    res.json({
+      status: 'SUCCESS',
+      data: rows
+    })
+  } catch (error) {
+    return res.status(500).json({
+      status: 'Error',
+      // data: 'Something goes wrong'
+      data: 'Algo va mal'
+    })
+  }
+}
+
+export const createUser = async (req, res) => {
+  const { firstName, lastName, username, password } = req.body
+  const result = await pool.query('SELECT * FROM t_user WHERE t_user.username = ?', [username])
+
+  try {
+    // Si no existe el correo, crea en la BD
+    if (result[0].length === 0) {
+      const salt = await bcryptjs.genSalt()
+      const hash = await bcryptjs.hash(password, salt)
+
+      const [rows] = await pool.query('INSERT INTO t_user (firstName, lastName, username, password) VALUES (?, ?, ?, ?)', [firstName, lastName, username, hash])
+
+      res.status(200).send({
+        status: 'SUCCESS',
+        data: {
+          id: rows.insertId,
+          firstName,
+          lastName,
+          username,
+          hash,
+        }
+      })
+    } else {
+      res.json({
+        status: 'Error',
+        // data: 'Email already exist'
+        data: 'El correo electrónico ya existe'
+      })
+    }
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      status: 'Error',
+      // data: 'Something goes wrong'
+      data: 'Algo va mal'
+    })
+  }
+}
+
+export const updateUser = async (req, res) => {
+  const { id } = req.params
+  // const id = req.params.id 
+  const { firstName, lastName, email, password } = req.body
+
+  try {
+    const [result] = await pool.query('UPDATE t_user SET firstName = IFNULL(?, firstName), lastName = IFNULL(?, lastName), email = IFNULL(?, email), password = IFNULL(?, password) WHERE id = ?', [firstName, lastName, email, password, id])
+
+    if (result.affectedRows === 0) {
+      return res.status(200).json({
+        status: 'Error',
+        // data: 'User not found'
+        data: 'Usuario no encontrado'
+      })
+    }
+
+    const [rows] = await pool.query('SELECT * FROM t_user WHERE id = ?', [id])
+
+    res.json({
+      status: 'SUCCESS',
+      data: rows
+    })
+  } catch (error) {
+    return res.status(500).json({
+      status: 'Error',
+      // data: 'Something goes wrong'
+      data: 'Algo va mal'
+    })
+  }
+}
+
+export const deleteUser = async (req, res) => {
+  try {
+    const [result] = await pool.query('DELETE FROM t_user WHERE id = ?', [req.params.id])
+
+    if (result.affectedRows <= 0) {
+      return res.status(200).json({
+        status: 'Error',
+        // data: 'User not found'
+        data: 'Usuario no encontrado'
+      })
+    }
+
+    res.sendStatus(204)
+  } catch (error) {
+    return res.status(500).json({
+      status: 'Error',
+      // data: 'Something goes wrong'
+      data: 'Algo va mal'
+    })
+  }
+}
