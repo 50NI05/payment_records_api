@@ -4,14 +4,6 @@ import timezone from "moment-timezone";
 export const addPayment = async (req, res) => {
   const { apartment, name, amount } = req.body
 
-  // const date = new Date();
-  // const current_date = ('0' + date.getDate()).slice(-2) + '/' +
-  //   ('0' + (date.getMonth() + 1)).slice(-2) + '/' +
-  //   date.getFullYear() + ' ' +
-  //   ('0' + date.getHours()).slice(-2) + ':' +
-  //   ('0' + date.getMinutes()).slice(-2) + ':' +
-  //   ('0' + date.getSeconds()).slice(-2);
-
   const current_date = timezone.tz('America/Caracas').format('YYYY-MM-DD HH:mm:ss');
   // console.log(fecha_actual);
 
@@ -31,6 +23,22 @@ export const addPayment = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({
+      status: 'Error',
+      // data: 'Something goes wrong'
+      data: 'Algo va mal'
+    })
+  }
+}
+
+export const getPayment = async (req, res) => {
+  try {
+    const [rows] = await pool.query('SELECT * FROM t_payment')
+    res.json({
+      status: 'SUCCESS',
+      data: rows
+    })
+  } catch (error) {
+    return res.status(500).json({
       status: 'Error',
       // data: 'Something goes wrong'
       data: 'Algo va mal'
