@@ -13,9 +13,13 @@ CREATE TABLE t_user (
 DESCRIBE t_payment;
 CREATE TABLE t_payment (
   id INT(10) NOT NULL AUTO_INCREMENT,
-  apartment INT(10) DEFAULT NULL,
   name VARCHAR(50) DEFAULT NULL,
+  identity_card INT DEFAULT NULL,
+  phone_number BIGINT DEFAULT NULL,
+  apartment INT(10) DEFAULT NULL,
+  reference_number BIGINT DEFAULT NULL,
   amount FLOAT DEFAULT NULL,
+  payment_date DATETIME DEFAULT NULL
   PRIMARY KEY (id)
 );
 ALTER TABLE t_payment ADD payment_date DATETIME DEFAULT NULL;
