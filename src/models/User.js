@@ -10,15 +10,15 @@ export const UserModel = (sequelize) => {
       },
       firstName: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       lastName: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       username: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       // email: {
       //   type: DataTypes.STRING,
@@ -36,7 +36,7 @@ export const UserModel = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: true,
       }
-    }, 
+    },
     {
       freezeTableName: true,
       timestamps: false,

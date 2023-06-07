@@ -23,7 +23,7 @@ export const getUser = async (req, res) => {
   try {
     const id = [req.params.id]
     User.findOne({
-      where: {id: id}
+      where: { id: id }
     }).then(response => {
       if (response === null) {
         return res.status(404).json({
@@ -51,7 +51,7 @@ export const createUser = async (req, res) => {
   let data = req.body;
   User.findOne(
     {
-      where: {username: data.username}
+      where: { username: data.username }
     }
   ).then(async (response) => {
     if (response === null) {
@@ -92,15 +92,25 @@ export const updateUser = async (req, res) => {
 
   try {
     User.findOne({
-      where: {id: id}
+      where: { id: id }
     }).then(user => {
       if (user) {
-        Object.assign(user, data);
-        user.save().then(user => res.json(user));
-
-        res.json({
-          status: 'SUCCESS',
-          data: user
+        User.update(
+          { firstName: data.firstName, lastName: data.lastName, username: data.username, password: data.password, },
+          { where: { id: id } }
+        ).then(response => {
+          if (response) {
+            res.json({
+              status: 'SUCCESS',
+              data: { firstName: response.firstName, lastName: response.lastName, username: response.username, password: response.password }
+            })
+          } else {
+            res.status(200).json({
+              status: 'Error',
+              // data: 'User not found'
+              data: 'Usuario no encontrado'
+            })
+          }
         })
       } else {
         return res.status(200).json({
@@ -128,7 +138,7 @@ export const deleteUser = async (req, res) => {
     }).then(response => {
       if (response) {
         response.destroy().then(
-          res.status(200).send() 
+          res.status(200).send()
         )
       } else {
         return res.status(200).json({

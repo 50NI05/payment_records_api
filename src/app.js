@@ -2,7 +2,7 @@
 import express from 'express'
 import session from 'express-session';
 import cors from "cors";
-// import loginRoutes from './routes/auth/auth.routes.js';
+import loginRoutes from './routes/auth/auth.routes.js';
 import usersRoutes from './routes/user/user.routes.js'
 // import paymentRoutes from "./routes/payment/payment.routes.js";
 
@@ -18,7 +18,7 @@ app.use(session({
   saveUninitialized: true,
 }))
 
-// app.use('/api', loginRoutes)
+app.use('/api', loginRoutes)
 app.use('/api', usersRoutes)
 // app.use('/api', paymentRoutes)
 

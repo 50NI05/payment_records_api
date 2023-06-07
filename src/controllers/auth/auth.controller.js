@@ -1,59 +1,112 @@
-import { pool } from '../../db.js'
+// import { pool } from '../../db.js'
 import { generateJWT } from '../../helpers/generateJWT.js';
 import bcryptjs from "bcryptjs";
+import { User } from "../../db.js";
 
 export const logIn = async (req, res) => {
   const { body } = req
   const username = body.username;
   const password = body.password;
 
+  const data = req.body;
+
   try {
-    const [users] = await pool.query('SELECT * FROM t_user WHERE t_user.username = ?', [username])
+    User.findOne({
+      where: { username: data.username }
+    }).then(async response => {
+      if (response) {
+        const validatePassword = await bcryptjs.compare(data.password, response.password);
+        const userData = response;
 
-    if (users.length === 0) {
-      res.json({
-        status: 'Error',
-        // data: 'Incorrect Email! Please try again'
-        data: 'Correo electrónico incorrecto Por favor, inténtelo de nuevo'
-      })
-    } else {
-      const validatePassword = await bcryptjs.compare(password, users[0].password)
-
-      if (!validatePassword) {
-        res.json({
-          status: 'Error',
-          // data: 'Incorrect Password! Please try again'
-          data: 'Contraseña incorrecta Por favor, inténtelo de nuevo'
-        })
-      } else {
-        const token = await generateJWT(users[0].id, users[0].firstName, users[0].lastName, users[0].username, users[0].password, users[0].profile)
-
-        if (token.length === 0) {
+        if (!validatePassword) {
           res.json({
             status: 'Error',
-            data: 'Error token'
+            // data: 'Incorrect Password! Please try again'
+            data: 'Contraseña incorrecta Por favor, inténtelo de nuevo'
           })
         } else {
-          const [rows] = await pool.query('UPDATE t_user SET token = ? WHERE id = ?', [token, users[0].id])
+          const token = await generateJWT(userData.id, userData.firstName, userData.lastName, userData.username, userData.password, userData.profile)
 
-          if (rows.affectedRows > 0) {
-            res.send({
-              status: 'SUCCESS',
-              data: token,
-              id: users[0].id,
-              profile: users[0].profile,
-              username: users[0].username
+          if (token.length == 0) {
+            res.json({
+              status: 'Error',
+              data: 'Error token'
             })
           } else {
-            res.send({
-              status: 'ERROR',
-              // data: 'Error insert token'
-              data: 'Error al insertar token'
+            User.update({ token: token }, { where: { username: data.username } }).then(reponse => {
+              if (response) {
+                res.send({
+                  status: 'SUCCESS',
+                  data: token,
+                  id: userData.id,
+                  profile: userData.profile,
+                  username: userData.username
+                })
+              } else {
+                res.send({
+                  status: 'ERROR',
+                  // data: 'Error insert token'
+                  data: 'Error al insertar token'
+                })
+              }
             })
           }
         }
+      } else {
+        res.json({
+          status: 'Error',
+          // data: 'Incorrect Email! Please try again'
+          data: 'Correo electrónico incorrecto Por favor, inténtelo de nuevo'
+        })
       }
-    }
+    })
+
+    // const [users] = await pool.query('SELECT * FROM t_user WHERE t_user.username = ?', [username])
+
+    // if (users.length === 0) {
+    //   res.json({
+    //     status: 'Error',
+    //     // data: 'Incorrect Email! Please try again'
+    //     data: 'Correo electrónico incorrecto Por favor, inténtelo de nuevo'
+    //   })
+    // } else {
+    //   const validatePassword = await bcryptjs.compare(password, users[0].password)
+
+    //   if (!validatePassword) {
+    //     res.json({
+    //       status: 'Error',
+    //       // data: 'Incorrect Password! Please try again'
+    //       data: 'Contraseña incorrecta Por favor, inténtelo de nuevo'
+    //     })
+    //   } else {
+    //     const token = await generateJWT(users[0].id, users[0].firstName, users[0].lastName, users[0].username, users[0].password, users[0].profile)
+
+    //     if (token.length === 0) {
+    //       res.json({
+    //         status: 'Error',
+    //         data: 'Error token'
+    //       })
+    //     } else {
+    //       const [rows] = await pool.query('UPDATE t_user SET token = ? WHERE id = ?', [token, users[0].id])
+
+    //       if (rows.affectedRows > 0) {
+    //         res.send({
+    //           status: 'SUCCESS',
+    //           data: token,
+    //           id: users[0].id,
+    //           profile: users[0].profile,
+    //           username: users[0].username
+    //         })
+    //       } else {
+    //         res.send({
+    //           status: 'ERROR',
+    //           // data: 'Error insert token'
+    //           data: 'Error al insertar token'
+    //         })
+    //       }
+    //     }
+    //   }
+    // }
 
   } catch (error) {
     res.status(500).json({
