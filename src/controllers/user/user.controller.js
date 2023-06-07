@@ -1,12 +1,14 @@
-import { pool } from '../../db.js'
+// import { pool } from '../../db.js'
 import bcryptjs from "bcryptjs";
+import { User } from "../../db.js";
 
 export const getUsers = async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM t_user')
-    res.json({
-      status: 'SUCCESS',
-      data: rows
+    User.findAll().then(users => {
+      res.json({
+        status: 'SUCCESS',
+        data: users
+      })
     })
   } catch (error) {
     return res.status(500).json({
@@ -19,17 +21,22 @@ export const getUsers = async (req, res) => {
 
 export const getUser = async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM t_user WHERE id = ?', [req.params.id])
-    if (rows.length <= 0) {
-      return res.status(404).json({
-        status: 'Error',
-        // data: 'User not found'
-        data: 'Usuario no encontrado'
-      })
-    }
-    res.json({
-      status: 'SUCCESS',
-      data: rows
+    const id = [req.params.id]
+    User.findOne({
+      where: {id: id}
+    }).then(response => {
+      if (response === null) {
+        res.json({
+          status: 'SUCCESS',
+          data: response
+        })
+      } else {
+        return res.status(404).json({
+          status: 'Error',
+          // data: 'User not found'
+          data: 'Usuario no encontrado'
+        })
+      }
     })
   } catch (error) {
     return res.status(500).json({
@@ -41,27 +48,33 @@ export const getUser = async (req, res) => {
 }
 
 export const createUser = async (req, res) => {
-  const { firstName, lastName, username, password } = req.body
-  const result = await pool.query('SELECT * FROM t_user WHERE t_user.username = ?', [username])
-
-  try {
-    // Si no existe el correo, crea en la BD
-    if (result[0].length === 0) {
+  let data = req.body;
+  User.findOne(
+    {
+      where: {username: data.username}
+    }
+  ).then(async (response) => {
+    if (response === null) {
       const salt = await bcryptjs.genSalt()
-      const hash = await bcryptjs.hash(password, salt)
+      const hash = await bcryptjs.hash(data.password, salt)
 
-      const [rows] = await pool.query('INSERT INTO t_user (firstName, lastName, username, password) VALUES (?, ?, ?, ?)', [firstName, lastName, username, hash])
-
-      res.status(200).send({
-        status: 'SUCCESS',
-        data: {
-          id: rows.insertId,
-          firstName,
-          lastName,
-          username,
-          hash,
-        }
-      })
+      User.create({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        username: data.username,
+        password: hash,
+      }).then((user) => {
+        res.json({
+          status: 'SUCCESS',
+          data: user,
+        });
+      }).catch((e) => {
+        console.log(e);
+        res.json({
+          status: 'ERROR',
+          msg: 'Error al registrar usuario'
+        });
+      });
     } else {
       res.json({
         status: 'Error',
@@ -69,39 +82,34 @@ export const createUser = async (req, res) => {
         data: 'El correo electrónico ya existe'
       })
     }
-
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      status: 'Error',
-      // data: 'Something goes wrong'
-      data: 'Algo va mal'
-    })
-  }
+  })
 }
 
 export const updateUser = async (req, res) => {
-  const { id } = req.params
+  const id = req.params
   // const id = req.params.id 
-  const { firstName, lastName, email, password } = req.body
+  const data = req.body
 
   try {
-    const [result] = await pool.query('UPDATE t_user SET firstName = IFNULL(?, firstName), lastName = IFNULL(?, lastName), email = IFNULL(?, email), password = IFNULL(?, password) WHERE id = ?', [firstName, lastName, email, password, id])
+    User.findOne({
+      where: {id: id}
+    }).then(user => {
+      if (user) {
+        Object.assign(user, data);
+        user.save().then(user => res.json(user)).catch(next);
 
-    if (result.affectedRows === 0) {
-      return res.status(200).json({
-        status: 'Error',
-        // data: 'User not found'
-        data: 'Usuario no encontrado'
-      })
-    }
-
-    const [rows] = await pool.query('SELECT * FROM t_user WHERE id = ?', [id])
-
-    res.json({
-      status: 'SUCCESS',
-      data: rows
-    })
+        res.json({
+          status: 'SUCCESS',
+          data: user
+        })
+      } else {
+        return res.status(200).json({
+          status: 'Error',
+          // data: 'User not found'
+          data: 'Usuario no encontrado'
+        })
+      }
+    }).catch(next);
   } catch (error) {
     return res.status(500).json({
       status: 'Error',
@@ -112,18 +120,24 @@ export const updateUser = async (req, res) => {
 }
 
 export const deleteUser = async (req, res) => {
+  const id = req.params.userId;
+
   try {
-    const [result] = await pool.query('DELETE FROM t_user WHERE id = ?', [req.params.id])
-
-    if (result.affectedRows <= 0) {
-      return res.status(200).json({
-        status: 'Error',
-        // data: 'User not found'
-        data: 'Usuario no encontrado'
-      })
-    }
-
-    res.sendStatus(204)
+    User.findOne({
+      where: { id: id }
+    }).then(response => {
+      if (response) {
+        response.destroy().then(
+          res.status(200).send()
+        ).catch(next);
+      } else {
+        return res.status(200).json({
+          status: 'Error',
+          // data: 'User not found'
+          data: 'Usuario no encontrado'
+        })
+      }
+    })
   } catch (error) {
     return res.status(500).json({
       status: 'Error',
