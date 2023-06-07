@@ -26,15 +26,15 @@ export const getUser = async (req, res) => {
       where: {id: id}
     }).then(response => {
       if (response === null) {
-        res.json({
-          status: 'SUCCESS',
-          data: response
-        })
-      } else {
         return res.status(404).json({
           status: 'Error',
           // data: 'User not found'
           data: 'Usuario no encontrado'
+        })
+      } else {
+        res.json({
+          status: 'SUCCESS',
+          data: response
         })
       }
     })
@@ -86,7 +86,7 @@ export const createUser = async (req, res) => {
 }
 
 export const updateUser = async (req, res) => {
-  const id = req.params
+  const id = [req.params.id]
   // const id = req.params.id 
   const data = req.body
 
@@ -96,7 +96,7 @@ export const updateUser = async (req, res) => {
     }).then(user => {
       if (user) {
         Object.assign(user, data);
-        user.save().then(user => res.json(user)).catch(next);
+        user.save().then(user => res.json(user));
 
         res.json({
           status: 'SUCCESS',
@@ -120,7 +120,7 @@ export const updateUser = async (req, res) => {
 }
 
 export const deleteUser = async (req, res) => {
-  const id = req.params.userId;
+  const id = req.params.id;
 
   try {
     User.findOne({
@@ -128,8 +128,8 @@ export const deleteUser = async (req, res) => {
     }).then(response => {
       if (response) {
         response.destroy().then(
-          res.status(200).send()
-        ).catch(next);
+          res.status(200).send() 
+        )
       } else {
         return res.status(200).json({
           status: 'Error',
