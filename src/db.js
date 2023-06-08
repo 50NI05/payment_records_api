@@ -11,6 +11,8 @@
 
 import Sequelize from "sequelize";
 import { UserModel } from "../src/models/User.js";
+import { PaymentModel } from "../src/models/Payment.js"
 const sequelize = new Sequelize('mysql://root:9262865472@localhost:3306/registerPaymentDB')
 // const sequelize = new Sequelize('registerPaymentDB', 'root', '123456', {host: 'localhost', dialect: 'mysql'})
 export const User = UserModel(sequelize);
+export const Payment = PaymentModel(sequelize)

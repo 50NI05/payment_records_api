@@ -1,6 +1,6 @@
 import DataTypes from "sequelize";
 
-export const UserModel = (sequelize) => {
+export const PaymentModel = (sequelize) => {
   return sequelize.define('t_payment',
     {
       id: {
