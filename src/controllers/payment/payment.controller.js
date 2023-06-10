@@ -66,3 +66,32 @@ export const getPayment = async (req, res) => {
     })
   }
 }
+
+export const deletePayment = (req, res) => {
+  const id = req.params.id;
+  try {
+    Payment.findOne({
+      where: { id: id }
+    }).then(response => {
+      if (response) {
+        response.destroy().then(
+          res.status(200).json({
+            status: 'SUCCESS'
+          })
+        )
+      } else {
+        return res.status(200).json({
+          status: 'Error',
+          // data: 'User not found'
+          data: 'Registro no encontrado'
+        })
+      }
+    })
+  } catch (error) {
+    res.status(500).json({
+      status: 'Error',
+      // data: 'Something goes wrong'
+      data: 'Algo va mal'
+    })
+  }
+}
