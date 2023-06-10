@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import { Configuration, OpenAIApi } from "openai";
 
 dotenv.config()
 
@@ -8,3 +9,8 @@ export const DB_PASSWORD = process.env.DB_PASSWORD || '9262865472'
 export const DB_HOST = process.env.DB_HOST || 'localhost'
 export const DB_DATABASE = process.env.DB_DATABASE || 'registerPaymentDB'
 export const DB_PORT = process.env.DB_PORT || 3306
+
+export const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+export const openai = new OpenAIApi(configuration);

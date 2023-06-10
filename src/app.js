@@ -5,6 +5,7 @@ import cors from "cors";
 import loginRoutes from './routes/auth/auth.routes.js';
 import usersRoutes from './routes/user/user.routes.js'
 import paymentRoutes from "./routes/payment/payment.routes.js";
+import aiRoutes from "./routes/ai/ai.routes.js";
 
 const app = express()
 
@@ -21,6 +22,7 @@ app.use(session({
 app.use('/api', loginRoutes)
 app.use('/api', usersRoutes)
 app.use('/api', paymentRoutes)
+app.use('/api', aiRoutes)
 
 app.use((req, res, next) => {
   res.status(404).json({
