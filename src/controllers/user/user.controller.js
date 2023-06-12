@@ -12,7 +12,7 @@ export const getUsers = async (req, res) => {
     })
   } catch (error) {
     return res.status(500).json({
-      status: 'Error',
+      status: 'ERROR',
       // data: 'Something goes wrong'
       data: 'Algo va mal'
     })
@@ -40,7 +40,7 @@ export const getUser = async (req, res) => {
     })
   } catch (error) {
     return res.status(500).json({
-      status: 'Error',
+      status: 'ERROR',
       // data: 'Something goes wrong'
       data: 'Algo va mal'
     })
@@ -77,7 +77,7 @@ export const createUser = async (req, res) => {
       });
     } else {
       res.json({
-        status: 'Error',
+        status: 'ERROR',
         // data: 'Email already exist'
         data: 'El correo electrónico ya existe'
       })
@@ -86,9 +86,9 @@ export const createUser = async (req, res) => {
 }
 
 export const updateUser = async (req, res) => {
-  const id = [req.params.id]
+  const id = req.params.id
   // const id = req.params.id 
-  const data = req.body
+  const data = req.body;
 
   try {
     User.findOne({
@@ -96,17 +96,21 @@ export const updateUser = async (req, res) => {
     }).then(user => {
       if (user) {
         User.update(
-          { firstName: data.firstName, lastName: data.lastName, username: data.username, password: data.password, },
+          { firstName: data.firstName, lastName: data.lastName, username: data.username, password: data.password },
           { where: { id: id } }
         ).then(response => {
           if (response) {
-            res.json({
-              status: 'SUCCESS',
-              data: { firstName: response.firstName, lastName: response.lastName, username: response.username, password: response.password }
+            User.findOne({
+              where: { id: id }
+            }).then(response => {
+              res.status(200).json({
+                status: 'SUCCESS',
+                data: response
+              })
             })
           } else {
             res.status(200).json({
-              status: 'Error',
+              status: 'ERROR',
               // data: 'User not found'
               data: 'Usuario no encontrado'
             })
@@ -114,15 +118,15 @@ export const updateUser = async (req, res) => {
         })
       } else {
         return res.status(200).json({
-          status: 'Error',
+          status: 'ERROR',
           // data: 'User not found'
           data: 'Usuario no encontrado'
         })
       }
-    }).catch(next);
+    });
   } catch (error) {
     return res.status(500).json({
-      status: 'Error',
+      status: 'ERROR',
       // data: 'Something goes wrong'
       data: 'Algo va mal'
     })
@@ -142,7 +146,7 @@ export const deleteUser = async (req, res) => {
         )
       } else {
         return res.status(200).json({
-          status: 'Error',
+          status: 'ERROR',
           // data: 'User not found'
           data: 'Usuario no encontrado'
         })
@@ -150,7 +154,7 @@ export const deleteUser = async (req, res) => {
     })
   } catch (error) {
     return res.status(500).json({
-      status: 'Error',
+      status: 'ERROR',
       // data: 'Something goes wrong'
       data: 'Algo va mal'
     })

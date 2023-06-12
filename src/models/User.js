@@ -26,7 +26,7 @@ export const UserModel = (sequelize) => {
       // },
       password: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       profile: {
         type: DataTypes.INTEGER,
