@@ -24,6 +24,7 @@
     "sequelize": "^6.32.0"
   },
   "dependencies": {
-    "openai": "^3.2.1"
+    "natural": "^6.5.0",
+    "openai": "^3.3.0"
   }
 }
