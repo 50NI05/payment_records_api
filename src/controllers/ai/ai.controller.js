@@ -10,7 +10,7 @@ let question_count = 0;
 
 export const test = async (req, res) => {
   const data = req.body
-  
+
   if (question_count >= MAX_QUESTIONS) {
     return res.status(400).json({
       status: 'ERROR',
@@ -25,7 +25,7 @@ export const test = async (req, res) => {
     } else {
       try {
         question_count++;
-        
+
         const response = await openai.createChatCompletion({
           model: "gpt-3.5-turbo",
           messages: [
@@ -77,26 +77,13 @@ function is_question_about_soccer(prompt) {
 
   const taggedTokens = tagger.tagWithLexicon(tokens);
 
-  // taggedTokens.taggedWords.map(e => {
-  //   if (isSoccerTerm(e.token)) {
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-  // })
-
   for (let index = 0; index < taggedTokens.taggedWords.length; index++) {
     if (isSoccerTerm(taggedTokens.taggedWords[index].token)) {
       return true;
-    } else {
-      return false;
     }
   }
-  // for (const [token, tag] of taggedTokens.taggedWords) {
-  //   if (tag === 'NN' && isSoccerTerm(token)) {
-  //     return true;
-  //   }
-  // }
+
+  return false;
 };
 
 function isSoccerTerm(term) {
