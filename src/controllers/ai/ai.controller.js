@@ -8,7 +8,7 @@ const language = 'es';
 const MAX_QUESTIONS = 5;
 let question_count = 0;
 
-export const test = async (req, res) => {
+export const assistant = async (req, res) => {
   const data = req.body
 
   if (question_count >= MAX_QUESTIONS) {

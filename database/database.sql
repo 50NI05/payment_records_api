@@ -6,7 +6,6 @@ CREATE TABLE t_user (
   lastName VARCHAR(45) DEFAULT NULL,
   username VARCHAR(100) DEFAULT NULL,
   password VARCHAR(150) DEFAULT NULL,
-  profile INT(10) DEFAULT 1,
   token VARCHAR(600) DEFAULT NULL,
   PRIMARY KEY (id)
 );
