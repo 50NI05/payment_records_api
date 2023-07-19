@@ -61,8 +61,8 @@ export const createUser = async (req, res) => {
       const hash = await bcryptjs.hash(data.password, salt)
 
       const useCreate = await User.create({
-        firstName: data.firstName,
-        lastName: data.lastName,
+        firstname: data.firstname,
+        lastname: data.lastname,
         username: data.username,
         password: hash,
       })
@@ -102,10 +102,11 @@ export const updateUser = async (req, res) => {
 
     if (user) {
       const salt = await bcryptjs.genSalt()
-      const hash = await bcryptjs.hash(data.password, salt)
+      const hash = data.password !== undefined ? await bcryptjs.hash(data.password, salt) : data.password
+
 
       const user = await User.update(
-        { firstName: data.firstName, lastName: data.lastName, username: data.username, password: hash },
+        { firstname: data.firstname, lastname: data.lastname, username: data.username, password: hash },
         { where: { id: id } }
       )
 

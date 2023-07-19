@@ -2,8 +2,8 @@ CREATE DATABASE IF NOT EXISTS registerPaymentDB;
 USE registerPaymentDB;
 CREATE TABLE t_user (
   id INT(10) NOT NULL AUTO_INCREMENT,
-  firstName VARCHAR(45) DEFAULT NULL,
-  lastName VARCHAR(45) DEFAULT NULL,
+  firstname VARCHAR(45) DEFAULT NULL,
+  lastname VARCHAR(45) DEFAULT NULL,
   username VARCHAR(100) DEFAULT NULL,
   password VARCHAR(150) DEFAULT NULL,
   token VARCHAR(600) DEFAULT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE t_payment (
   name VARCHAR(50) DEFAULT NULL,
   identity_card INT DEFAULT NULL,
   phone_number BIGINT DEFAULT NULL,
-  apartment INT(10) DEFAULT NULL,
+  apartment VARCHAR(10) DEFAULT NULL,
   reference_number BIGINT DEFAULT NULL,
   amount FLOAT DEFAULT NULL,
   payment_date DATETIME DEFAULT NULL

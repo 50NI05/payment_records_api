@@ -4,9 +4,9 @@ import { verifyToken } from "../../middlewares/validate_token.js";
 
 const router = expressRouter.Router()
 
-router.get('/users', verifyToken, getUsers)
+router.get('/getUsers', verifyToken, getUsers)
 
-router.get('/user/:id', verifyToken, getUser)
+router.get('/getUser/:id', verifyToken, getUser)
 
 router.post('/register', createUser)
 

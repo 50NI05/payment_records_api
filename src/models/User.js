@@ -8,11 +8,11 @@ export const UserModel = (sequelize) => {
         autoIncrement: true,
         primaryKey: true,
       },
-      firstName: {
+      firstname: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      lastName: {
+      lastname: {
         type: DataTypes.STRING,
         allowNull: true,
       },
@@ -20,16 +20,8 @@ export const UserModel = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      // email: {
-      //   type: DataTypes.STRING,
-      //   allowNull: false,
-      // },
       password: {
         type: DataTypes.STRING,
-        allowNull: true,
-      },
-      profile: {
-        type: DataTypes.INTEGER,
         allowNull: true,
       },
       token: {

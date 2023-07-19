@@ -47,7 +47,7 @@ export const addPayment = async (req, res) => {
   }
 }
 
-export const getPayment = async (req, res) => {
+export const getAllPayment = async (req, res) => {
   try {
     const payments = await Payment.findAll()
     
@@ -64,6 +64,31 @@ export const getPayment = async (req, res) => {
     }
   } catch (error) {
     return res.status(500).json({
+      status: 'ERROR',
+      data: 'Lo sentimos, pero estamos experimentando problemas con nuestro servicio en este momento, por favor intenta más tarde. Gracias por tu paciencia.'
+    })
+  }
+}
+
+export const getPayment = async (req, res) => {
+  const data = req.body
+
+  try {
+    const payment = await Payment.findAll({ where: data })
+
+    if (payment) {
+      res.status(200).json({
+        status: 'SUCCESS',
+        data: payment
+      })
+    } else {
+      res.status(200).json({
+        status: 'ERROR',
+        data: 'Lo sentimos, pero no podemos encontrar los datos que has proporcionado. Por favor, asegúrate de que has introducido los datos correctamente y vuelve a intentarlo'
+      })
+    }
+  } catch (error) {
+    res.status(500).json({
       status: 'ERROR',
       data: 'Lo sentimos, pero estamos experimentando problemas con nuestro servicio en este momento, por favor intenta más tarde. Gracias por tu paciencia.'
     })
