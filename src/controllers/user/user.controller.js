@@ -4,7 +4,7 @@ import { User } from "../../db.js";
 
 export const getUsers = async (req, res) => {
   try {
-    const users = User.findAll()
+    const users = await User.findAll()
 
     if (users) {
       res.json({
@@ -29,7 +29,7 @@ export const getUser = async (req, res) => {
   const id = req.params.id
 
   try {
-    const user = User.findOne({ where: { id: id } });
+    const user = await User.findOne({ where: { id: id } });
 
     if (user === null) {
       return res.status(404).json({
@@ -54,13 +54,13 @@ export const createUser = async (req, res) => {
   let data = req.body;
 
   try {
-    const user = User.findOne({ where: { username: data.username } })
+    const user = await User.findOne({ where: { username: data.username } })
 
     if (user === null) {
       const salt = await bcryptjs.genSalt()
       const hash = await bcryptjs.hash(data.password, salt)
 
-      const useCreate = User.create({
+      const useCreate = await User.create({
         firstName: data.firstName,
         lastName: data.lastName,
         username: data.username,
@@ -70,7 +70,7 @@ export const createUser = async (req, res) => {
       if (useCreate) {
         res.json({
           status: 'SUCCESS',
-          data: user,
+          data: 'Usuario registrado exitosamente',
         });
       } else {
         res.json({
