@@ -145,7 +145,7 @@ export const deletePayment = async (req, res) => {
     const payment = await Payment.findOne({ where: { id: id } })
 
     if (payment) {
-      response.destroy().then(
+      payment.destroy().then(
         res.status(200).json({
           status: 'SUCCESS'
         })
