@@ -13,23 +13,23 @@ export const PaymentModel = (sequelize) => {
         allowNull: true,
       },
       identity_card: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: true,
       },
       phone_number: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.STRING,
         allowNull: true,
       },
       apartment: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: true,
       },
       reference_number: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.STRING,
         allowNull: true,
       },
       amount: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.STRING,
         allowNull: true,
       },
       payment_date: {
