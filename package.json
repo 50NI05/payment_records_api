@@ -25,6 +25,8 @@
   },
   "dependencies": {
     "natural": "^6.5.0",
-    "openai": "^3.3.0"
+    "openai": "^3.3.0",
+    "pg": "^8.11.2",
+    "pg-hstore": "^2.3.4"
   }
 }
